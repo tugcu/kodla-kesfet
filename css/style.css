@@ -54,7 +54,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 .chip { background: var(--soft); border: 1px solid var(--bd); border-radius: 99px; padding: 3px 10px; font-size: 13px; font-weight: 600; white-space: nowrap; }
 .chip.lvl { position: relative; overflow: hidden; }
 .chip.lvl i { position: absolute; left: 0; bottom: 0; height: 3px; width: var(--p); background: linear-gradient(90deg, var(--pr), var(--pr2)); }
-@media (max-width: 560px) { .brand small { display: none; } .chip:first-child { display: none; } .top { padding-inline: 16px; } }
+@media (max-width: 560px) { .brand small { display: none; } .chip:nth-child(2) { display: none; } .top { padding-inline: 16px; } }
 
 main { width: 100%; max-width: 1280px; margin: 0 auto; padding: 20px 16px 40px; flex: 1; }
 .foot { text-align: center; color: var(--mut); font-size: 12px; padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
