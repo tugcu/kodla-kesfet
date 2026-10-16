@@ -3,106 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kodla & Keşfet</title>
-<style>
-:root{--bg:#fdf6fb;--card:#fff;--tx:#2a1f3d;--mut:#6b5f80;--pr:#8b3fd9;--pr2:#e84a9c;--ok:#1f9d63;--bad:#d64545;--bd:#eadcf3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17111f;--card:#231a30;--tx:#f3ecfa;--mut:#a99bc0;--pr:#b57bff;--pr2:#ff72b8;--ok:#4cd28d;--bad:#ff7b7b;--bd:#392a4d}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
-header{padding:18px 24px;background:linear-gradient(120deg,var(--pr),var(--pr2));color:#fff}
-header h1{margin:0;font-size:22px}header p{margin:2px 0 0;opacity:.9;font-size:14px}
-.prog{height:8px;background:rgba(255,255,255,.3);border-radius:8px;margin-top:12px;overflow:hidden}
-.prog i{display:block;height:100%;width:0;background:#fff;transition:width .5s}
-main{display:grid;grid-template-columns:240px 1fr;gap:20px;max-width:1050px;margin:20px auto;padding:0 16px}
-@media(max-width:760px){main{grid-template-columns:1fr}}
-nav{display:flex;flex-direction:column;gap:8px}
-.step{padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--bd);display:flex;gap:10px;align-items:center;font-size:15px}
-.step.cur{border-color:var(--pr);box-shadow:0 0 0 2px var(--pr) inset}
-.step.lock{opacity:.5}
-.step b{font-size:18px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:20px}
-.card h2{margin:0 0 12px;font-size:20px}
-.vid{aspect-ratio:16/9;width:100%;border-radius:12px;border:0;background:#000}
-.vl{font-size:13px;color:var(--mut);margin:8px 0 14px}.vl a{color:var(--pr)}
-.play{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;aspect-ratio:16/9;width:100%;border-radius:12px;background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff;text-decoration:none;text-align:center;padding:16px}
-.play .tri{width:72px;height:72px;border-radius:50%;background:#fff;color:var(--pr);display:flex;align-items:center;justify-content:center;font-size:30px;padding-left:6px}
-.play small{opacity:.9}
-button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 20px;background:var(--pr);color:#fff;font-weight:600}
-button:disabled{opacity:.4;cursor:not-allowed}
-button.ghost{background:transparent;color:var(--pr);border:2px solid var(--pr)}
-.q{margin:16px 0}.q p{font-weight:600;margin:0 0 8px}
-.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:12px 14px;background:var(--bg);color:var(--tx);border:2px solid var(--bd);font-weight:500}
-.opt.sel{border-color:var(--pr)}
-.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--card))}
-.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,var(--card))}
-.res{padding:16px;border-radius:12px;margin-top:14px;font-weight:600}
-.res.pass{background:color-mix(in srgb,var(--ok) 18%,var(--card))}
-.res.fail{background:color-mix(in srgb,var(--bad) 18%,var(--card))}
-.big{text-align:center;padding:30px 10px}.big .e{font-size:64px}
-</style>
+<meta name="description" content="Tarayıcıda JavaScript ve Python ile programlama problemleri çöz, kodun otomatik testlerle anında değerlendirilsin.">
+<title>Kodla & Keşfet · Kod Arenası</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header>
-  <h1>💜 Kodla &amp; Keşfet</h1>
-  <p>Yapay zeka ve yazılım dünyasına ilk adım</p>
-  <div class="prog"><i id="bar"></i></div>
+<header class="top">
+  <a class="brand" href="#/"><span>💜</span> Kodla &amp; Keşfet <small>Kod Arenası</small></a>
+  <div class="right">
+    <div id="topStats" class="topstats"></div>
+    <button id="themeBtn" class="icon" aria-label="Temayı değiştir">🌙</button>
+  </div>
 </header>
-<main>
-  <nav id="nav"></nav>
-  <section class="card" id="stage"></section>
-</main>
-<script>
-const PASS=0.6; // geçme oranı: %60 (3 sorudan en az 2)
-const S=[
-{t:"Bilgisayar Nasıl Çalışır?",v:"gxKumK5RghY",q:[
- ["Bilgisayarın “beyni” olarak adlandırılan parça hangisidir?",["Fare","İşlemci (CPU)","Hoparlör"],1],
- ["Bilgisayar bilgiyi hangi sayılarla işler?",["Sadece 0 ve 1","1’den 100’e kadar","Harfler"],0],
- ["Dosyalarımız bilgisayar kapansa da nerede saklanır?",["Depolama (SSD/Disk)","Ekran","Klavye"],0]]},
-{t:"Bilgisayarın Parçaları",v:"Hqv-Vaod5Z4",q:[
- ["RAM ne işe yarar?",["Çalışan programların verisini geçici tutar","İnternete bağlar","Ses çıkarır"],0],
- ["Klavye hangi gruba girer?",["Çıkış birimi","Giriş birimi","Depolama birimi"],1],
- ["Hangisi bir işletim sistemidir?",["Windows","Hoparlör","Kulaklık"],0]]},
-{t:"Yazılım ve Algoritma",v:"1CeYHoxWawA",q:[
- ["Yazılım nedir?",["Bilgisayarın dış kasası","Bilgisayara ne yapacağını söyleyen talimatlar","Bir kablo türü"],1],
- ["Algoritma nedir?",["Bir problemi çözmek için adım adım yol","Bir oyun konsolu","Bir internet sitesi"],0],
- ["Hata ayıklama (debugging) ne demektir?",["Kodu silmek","Koddaki hataları bulup düzeltmek","Bilgisayarı temizlemek"],1]]}
-];
-let cur=0,done=-1,mode="video",ans=[],checked=false;
-const $=id=>document.getElementById(id);
-function nav(){
- $("nav").innerHTML=S.map((s,i)=>{
-  const st=i<=done?"✅":i>done+1?"🔒":"▶️";
-  return `<div class="step ${i==cur&&done<S.length-1?"cur":""} ${i>done+1?"lock":""}"><b>${st}</b><span>Bölüm ${i+1}<br><small>${s.t}</small></span></div>`}).join("");
- $("bar").style.width=((done+1)/S.length*100)+"%";
-}
-function render(){
- nav();
- const s=S[cur],g=$("stage");
- if(done>=S.length-1){g.innerHTML=`<div class="big"><div class="e">🎉</div><h2>Tebrikler!</h2><p>Tüm bölümleri başarıyla tamamladın. Harika bir başlangıç yaptın!</p><button onclick="done=-1;cur=0;mode='video';render()">Baştan izle</button></div>`;return}
- if(mode=="video"){
-  g.innerHTML=`<h2>Bölüm ${cur+1}: ${s.t}</h2>
-  <iframe class="vid" src="https://www.youtube-nocookie.com/embed/${s.v}?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1" title="Bölüm ${cur+1}" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer;encrypted-media;picture-in-picture;fullscreen" allowfullscreen></iframe>
-  <div class="vl"></div>
-  <button onclick="startQuiz()">Videoyu izledim, quize geç →</button>`;
- } else {
-  g.innerHTML=`<h2>📝 Bölüm ${cur+1} Quiz’i</h2><p style="color:var(--mut);margin:0">Devam etmek için en az %${PASS*100} doğru gerekli.</p>`+
-  s.q.map((q,i)=>`<div class="q"><p>${i+1}. ${q[0]}</p>${q[1].map((o,j)=>{
-    let c="opt";if(checked){if(j==q[2])c+=" right";else if(ans[i]==j)c+=" wrong"}else if(ans[i]==j)c+=" sel";
-    return `<button class="${c}" ${checked?"disabled":""} onclick="pick(${i},${j})">${o}</button>`}).join("")}</div>`).join("")+
-  (checked?result():`<button id="chk" ${ans.filter(a=>a!==undefined).length<s.q.length?"disabled":""} onclick="check()">Cevapları Kontrol Et</button>`);
- }
-}
-function startQuiz(){mode="quiz";ans=[];checked=false;render()}
-function pick(i,j){ans[i]=j;render()}
-function score(){return S[cur].q.filter((q,i)=>ans[i]==q[2]).length}
-function check(){checked=true;render()}
-function result(){
- const n=score(),t=S[cur].q.length,ok=n/t>=PASS,last=cur==S.length-1;
- return ok?`<div class="res pass">🎉 Harika! ${t} sorudan ${n} doğru.</div><br><button onclick="next()">${last?"Bitir 🏁":"Sonraki Bölüm →"}</button>`
- :`<div class="res fail">${t} sorudan ${n} doğru. Devam etmek için biraz daha çalışmalısın. Videoyu tekrar izleyip yeniden dene 💪</div><br><button onclick="mode='video';render()">Videoyu Tekrar İzle</button> <button class="ghost" onclick="startQuiz()">Quizi Tekrar Çöz</button>`;
-}
-function next(){done=Math.max(done,cur);if(cur<S.length-1)cur++;mode="video";render()}
-render();
-</script>
+<main id="app"></main>
+<footer class="foot">Kodun tamamen tarayıcında çalışır; hiçbir sunucuya gönderilmez.</footer>
+
+<!-- Kod editörü: CDN'e erişilemezse uygulama düz bir metin alanına geri döner. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="js/problems.js"></script>
+<script src="js/runner.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
