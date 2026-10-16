@@ -78,6 +78,18 @@ Uygulama videoları `youtube-nocookie.com` üzerinden, ilgili video önerileri k
 
 Bağlantıyı tamamen gizlemek teknik olarak mümkün değil: oynatıcıdaki YouTube logosu ve tarayıcının geliştirici araçları video kimliğini gösterebilir. Bunun önüne geçmek gerekirse videolar Vimeo (alan adı kısıtlamalı) ya da Cloudflare Stream gibi bir servise taşınabilir.
 
+## Sürüm bilgisi
+
+Her sayfanın alt bilgisinde sürüm numarası ve son güncelleme zamanı görünüyor (ör. "Sürüm 2.2.0 · Son güncelleme: 16 Ekim 2026 13:56"). Bu bilgi `js/version.js` içindeki `APP_VERSION` ve `UPDATED_AT` değerlerinden geliyor.
+
+Her güncellemede şunlar yapılmalı:
+
+1. `APP_VERSION` yükseltilir: hata düzeltmesinde son sayı, yeni özellikte ortadaki sayı, büyük değişiklikte ilk sayı.
+2. `UPDATED_AT` güncellenir.
+3. `index.html` ve `arena.html` içindeki `?v=` önbellek parametresi artırılır.
+
+`node tests/version.test.mjs` bu değerlerin geçerli olduğunu ve her sayfada gösterildiğini kontrol ediyor.
+
 ## Çalıştırma
 
 ```bash
@@ -93,6 +105,7 @@ Derleme adımı yok. GitHub Pages'te olduğu gibi çalışıyor.
 | `index.html`, `css/lms.css` | Eğitim platformu |
 | `js/api.js` | Veri katmanı: kimlik doğrulama, yetki kontrolü, ilerleme kilitleri, notlandırma |
 | `js/seed.js` | Demo hesapları ve örnek ders (hazır ilerleme içermez) |
+| `js/version.js` | Sürüm numarası ve son güncelleme zamanı (alt bilgide gösterilir) |
 | `js/storage-version.js` | Veri sürümü kontrolü ve eski ilerlemenin temizlenmesi |
 | `js/app.js` | Yönlendirme, üst menü, giriş ekranı |
 | `js/views-student.js`, `js/views-teacher.js`, `js/views-admin.js` | Rol bazlı ekranlar |
