@@ -40,7 +40,7 @@
       ${user ? `<nav class="mainnav">${links.map(([h, t]) => `<a href="${h}" class="${(h === "#/" ? here === "#/" : here.startsWith(h)) ? "on" : ""}">${t}</a>`).join("")}</nav>` : "<span></span>"}
       <div class="right">
         ${user ? `<div class="who"><span class="avatar">${esc(user.name[0])}</span><span class="wn"><b>${esc(user.name)}</b><small>${ROLE[user.role]}</small></span>
-          <div class="menu"><button id="pwBtn" class="ghost sm">Şifre değiştir</button><button id="outBtn" class="ghost sm">Çıkış yap</button></div></div>` : ""}
+          <div class="menu"><button id="pwBtn" class="ghost sm">Şifre değiştir</button>${user.role === "student" ? `<button id="resetBtn" class="ghost sm danger">Hesabı sıfırla</button>` : ""}<button id="outBtn" class="ghost sm">Çıkış yap</button></div></div>` : ""}
         <button id="themeBtn" class="icon" aria-label="Temayı değiştir"></button>
       </div>`;
     $("#themeBtn").onclick = toggleTheme;
@@ -49,6 +49,14 @@
     $(".who").onclick = e => { if (!e.target.closest(".menu")) $(".who").classList.toggle("open"); };
     document.addEventListener("click", e => { const w = $(".who"); if (w && !w.contains(e.target)) w.classList.remove("open"); }, { once: true, capture: true });
     $("#outBtn").onclick = async () => { await API.logout(); App.go("#/login"); };
+    const rb = $("#resetBtn");
+    if (rb) rb.onclick = async () => {
+      if (!confirm("Tüm ilerlemen silinecek, emin misin?")) return;
+      try { await API.resetMyProgress(); }
+      catch (e) { return UI.toast(e.message, "bad"); }
+      location.hash = "#/";
+      location.reload();
+    };
     $("#pwBtn").onclick = () => UI.modal({
       title: "Şifre değiştir", submit: "Değiştir",
       body: `<label>Mevcut şifre<input type="password" name="o" required autocomplete="current-password"></label>

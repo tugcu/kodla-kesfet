@@ -14,13 +14,26 @@ Ders akışı kısa videolardan, quizlerden, ödevlerden ve ders sonu sınavınd
 | Öğretmen | `ogretmen` | `ogretmen123` |
 | Öğrenci | `ayse`, `zeynep`, `elif` | `ogrenci123` |
 
-Giriş ekranındaki demo hesap düğmeleri tek tıkla giriş yapıyor. Öğrenciler, öğretmen panelinin dolu görünmesi için farklı aşamalardan başlıyor:
-
-- **Ayşe:** Zorunlu kod ödevini teslim etmiş, öğretmen onayını bekliyor. 3. bölüm onay gelene kadar kilitli.
-- **Zeynep:** İlk quizden bir kez kalmış.
-- **Elif:** Dersi bitirmiş; genel sınavı onay bekliyor.
+Giriş ekranındaki demo hesap düğmeleri tek tıkla giriş yapıyor. Bütün öğrenciler **ilk kez giriş yapmış** gibi başlıyor: izlenmiş video ya da çözülmüş quiz yok, ders Bölüm 1'in videosundan başlıyor.
 
 Yönetici panelindeki **Demo verilerini sıfırla** düğmesi her şeyi bu başlangıç hâline döndürüyor.
+
+### İlerlemenin saklanması
+
+| Anahtar | İçerik |
+|---|---|
+| `kk-lms.v1` (localStorage) | Hesaplar, dersler ve içerikler. İlerleme kısmı: izlenen videolar (`progress`), quiz/ödev/sınav teslimleri (`submissions`), yüklenen dosyaların bilgisi (`files`) |
+| `kk-lms-files` (IndexedDB) | Yüklenen dosyaların içeriği |
+| `kk-lms.draft.<öğrenci>.<içerik>` | Kod ödevi taslakları |
+| `kk-lms.done.<öğrenci>.<ders>` | "Dersi tamamladın" kutlamasının gösterildiği bilgisi |
+| `kodla-kesfet.v1.<öğrenci>` | Kod Arenası ilerlemesi |
+| `kk-lms.dataVersion` | İlerleme verisinin sürümü |
+
+Kilit durumları ayrıca saklanmıyor; her açılışta izlenen videolar ve teslimlerden hesaplanıyor.
+
+**Veri sürümü:** `js/storage-version.js` içindeki `DATA_VERSION`, tarayıcıda kayıtlı sürümle eşleşmezse bütün öğrenci ilerlemesi bir kereliğine siliniyor. Hesaplar, şifreler, dersler ve tema tercihi korunuyor. Eski test verilerini temizlemek gerektiğinde bu sayıyı artırmak yeterli.
+
+**Hesabı sıfırla:** Öğrenci menüsündeki bu seçenek yalnızca o öğrencinin ilerlemesini siliyor: videolar, quiz/ödev/sınav sonuçları, yüklediği dosyalar, kod taslakları ve arena verisi. Hesap ve şifre korunuyor; diğer öğrencilerin verisine dokunulmuyor.
 
 ## Örnek ders: Python ile Programlamaya Giriş
 
@@ -79,13 +92,14 @@ Derleme adımı yok. GitHub Pages'te olduğu gibi çalışıyor.
 |---|---|
 | `index.html`, `css/lms.css` | Eğitim platformu |
 | `js/api.js` | Veri katmanı: kimlik doğrulama, yetki kontrolü, ilerleme kilitleri, notlandırma |
-| `js/seed.js` | Demo hesapları ve örnek ders |
+| `js/seed.js` | Demo hesapları ve örnek ders (hazır ilerleme içermez) |
+| `js/storage-version.js` | Veri sürümü kontrolü ve eski ilerlemenin temizlenmesi |
 | `js/app.js` | Yönlendirme, üst menü, giriş ekranı |
 | `js/views-student.js`, `js/views-teacher.js`, `js/views-admin.js` | Rol bazlı ekranlar |
 | `js/ui.js` | Ortak yardımcılar (modal, bildirim, konfeti, kod editörü, YouTube) |
 | `js/runner.js` | Kodu Web Worker içinde, zaman aşımıyla çalıştıran test çalıştırıcı (Python için Pyodide) |
 | `arena.html`, `js/arena.js`, `js/problems.js`, `css/style.css` | Kod Arenası |
-| `tests/api.test.mjs` | İş kuralı testleri: `node tests/api.test.mjs` |
+| `tests/api.test.mjs` | İş kuralı testleri (sürüm geçişi ve hesap sıfırlama dahil): `node tests/api.test.mjs` |
 | `tests/verify-problems.mjs` | Arena problemlerinin doğrulaması |
 
 ## Gerçek kullanıma geçiş
