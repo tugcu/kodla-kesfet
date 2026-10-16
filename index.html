@@ -7,10 +7,24 @@
 <title>Kodla & Keşfet</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-<link rel="stylesheet" href="css/lms.css">
+<link rel="stylesheet" href="css/lms.css?v=2">
 </head>
 <body>
 <header class="top" id="top"></header>
+<script>
+  // Betiklerden biri yüklenemez ya da hata verirse sayfa boş kalmasın; kullanıcıya yenilemeyi öner.
+  window.addEventListener("error", function (e) {
+    if (!e.filename || !/\/js\//.test(e.filename)) return;
+    setTimeout(function () {
+      var app = document.getElementById("app");
+      if (!app || app.children.length) return;
+      app.innerHTML = '<div class="panel empty-state"><div class="big">🔄</div><h2>Sayfa tam yüklenemedi</h2>' +
+        '<p class="mut">Tarayıcın eski bir sürümü önbellekten yüklemiş olabilir.</p>' +
+        '<button onclick="location.reload()">Sayfayı yenile</button>' +
+        '<p class="mut small">Sorun sürerse Ctrl+Shift+R (Mac: Cmd+Shift+R) ile yenile.</p></div>';
+    }, 300);
+  });
+</script>
 <main id="app"></main>
 <footer class="foot">Kodla &amp; Keşfet · Demo sürüm: veriler bu tarayıcıda saklanır.</footer>
 
@@ -20,13 +34,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/runner.js"></script>
-<script src="js/seed.js"></script>
-<script src="js/api.js"></script>
-<script src="js/app.js"></script>
-<script src="js/views-student.js"></script>
-<script src="js/views-teacher.js"></script>
-<script src="js/views-admin.js"></script>
+<script src="js/ui.js?v=2"></script>
+<script src="js/runner.js?v=2"></script>
+<script src="js/seed.js?v=2"></script>
+<script src="js/api.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
+<script src="js/views-student.js?v=2"></script>
+<script src="js/views-teacher.js?v=2"></script>
+<script src="js/views-admin.js?v=2"></script>
 </body>
 </html>
