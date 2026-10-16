@@ -3,22 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Tarayıcıda JavaScript ve Python ile programlama problemleri çöz, kodun otomatik testlerle anında değerlendirilsin.">
-<title>Kodla & Keşfet · Kod Arenası</title>
+<meta name="description" content="Kız öğrenciler için yapay zeka ve yazılım eğitimi: kısa videolar, quizler, ödevler ve ders sonu değerlendirmesi.">
+<title>Kodla & Keşfet</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/lms.css">
 </head>
 <body>
-<header class="top">
-  <a class="brand" href="#/"><span>💜</span> Kodla &amp; Keşfet <small>Kod Arenası</small></a>
-  <div class="right">
-    <div id="topStats" class="topstats"></div>
-    <button id="themeBtn" class="icon" aria-label="Temayı değiştir">🌙</button>
-  </div>
-</header>
+<header class="top" id="top"></header>
 <main id="app"></main>
-<footer class="foot">Kodun tamamen tarayıcında çalışır; hiçbir sunucuya gönderilmez.</footer>
+<footer class="foot">Kodla &amp; Keşfet · Demo sürüm: veriler bu tarayıcıda saklanır.</footer>
 
 <!-- Kod editörü: CDN'e erişilemezse uygulama düz bir metin alanına geri döner. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -26,8 +20,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
-<script src="js/problems.js"></script>
+<script src="js/ui.js"></script>
 <script src="js/runner.js"></script>
+<script src="js/seed.js"></script>
+<script src="js/api.js"></script>
 <script src="js/app.js"></script>
+<script src="js/views-student.js"></script>
+<script src="js/views-teacher.js"></script>
+<script src="js/views-admin.js"></script>
 </body>
 </html>

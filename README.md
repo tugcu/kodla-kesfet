@@ -1,70 +1,101 @@
-# 💜 Kodla & Keşfet · Kod Arenası
+# 💜 Kodla & Keşfet
 
-Lise ve üniversitenin başlangıç seviyesindeki öğrenciler için tarayıcıda çalışan bir programlama alıştırma platformu. Öğrenci **JavaScript** veya **Python** ile problem çözüyor, kodu örnek testlere ve gizli testlere karşı anında değerlendiriliyor.
+Kız öğrencilere yapay zeka ve yazılım öğretmek için tasarlanmış bir video eğitim platformu.
 
-Sunucu, hesap ya da kurulum gerektirmiyor. Kod tamamen kullanıcının tarayıcısında çalışıyor.
+Ders akışı kısa videolardan, quizlerden, ödevlerden ve ders sonu sınavından oluşuyor. Akış kilitli ilerliyor: öğrenci bir adımı tamamlamadan sonrakine geçemiyor. Ek olarak, serbest pratik için tarayıcıda çalışan bir **Kod Arenası** (`arena.html`) da var.
 
-## Özellikler
+> **Demo sürüm.** Bütün veriler tarayıcıda (localStorage ve IndexedDB) tutuluyor. Bu yüzden her tarayıcı kendi verisini görüyor: öğrencinin teslimini öğretmenin görebilmesi için ikisinin de aynı tarayıcıdan giriş yapması gerekiyor. Gerçek kullanım için veri katmanının bir sunucuya taşınması gerekiyor (bkz. [Gerçek kullanıma geçiş](#gerçek-kullanıma-geçiş)).
 
-- **25 problem.** Kolay, orta ve zor seviyelerde; temeller, koşullar, döngüler, diziler, metinler, sözlükler, yığın, arama, graf ve dinamik programlama konularını kapsıyor.
-- **Otomatik değerlendirme.**
-  - *Çalıştır* yalnızca örnek testleri koşturuyor.
-  - *Gönder* gizli testleri de çalıştırıyor. Gizli testlerin girdisi gösterilmiyor ve bu testler sırasında üretilen konsol çıktısı da bastırılıyor.
-- **İki dil.**
-  - JavaScript doğrudan çalışıyor.
-  - Python, [Pyodide](https://pyodide.org) ile ilk kullanımda yükleniyor.
-  - Fonksiyon adları her iki dilde de kendi kuralına göre (`ciftMi` / `cift_mi`) otomatik üretiliyor.
-- **Güvenli çalıştırma.** Kullanıcı kodu ayrı bir Web Worker içinde çalışıyor. Sonsuz döngüye giren kod zaman aşımında sonlandırılıyor (JS için 4 sn, Python için 6 sn).
-- **Oyunlaştırma.**
-  - XP: kolay 10, orta 20, zor 40. Alınan her ipucu ödülü %25 azaltıyor.
-  - Seviyeler, günlük seri ve 10 rozet var.
-- **Kalıcılık.** İlerleme ve yazılan kod `localStorage`'da saklanıyor. JSON olarak dışa ve içe aktarılabiliyor.
-- **Arayüz.** Açık/koyu tema ve mobil uyumlu düzen var. Kısayollar: `Ctrl+Enter` çalıştırır, `Ctrl+Shift+Enter` gönderir.
+## Demo hesapları
+
+| Rol | Kullanıcı adı | Şifre |
+|---|---|---|
+| Yönetici | `admin` | `admin123` |
+| Öğretmen | `ogretmen` | `ogretmen123` |
+| Öğrenci | `ayse`, `zeynep`, `elif` | `ogrenci123` |
+
+Giriş ekranındaki demo hesap düğmeleri tek tıkla giriş yapıyor. Öğrenciler, öğretmen panelinin dolu görünmesi için farklı aşamalardan başlıyor:
+
+- **Ayşe:** Zorunlu kod ödevini teslim etmiş, öğretmen onayını bekliyor. 3. bölüm onay gelene kadar kilitli.
+- **Zeynep:** İlk quizden bir kez kalmış.
+- **Elif:** Dersi bitirmiş; genel sınavı onay bekliyor.
+
+Yönetici panelindeki **Demo verilerini sıfırla** düğmesi her şeyi bu başlangıç hâline döndürüyor.
+
+## Örnek ders: Python ile Programlamaya Giriş
+
+Akış sırasıyla şöyle:
+
+1. 🎬 Bölüm 1 → 📝 Quiz 1 (4 soru, baraj %75)
+2. 🎬 Bölüm 2 → 📝 Quiz 2 (4 soru, baraj %60)
+3. 📎 Ödev 1 (kod, **zorunlu**: geçer not alınmadan devam edilemez)
+4. 🎬 Bölüm 3 → 📝 Quiz 3 (4 soru, baraj %75)
+5. 📎 Ödev 2 (açık uçlu, ilerlemeyi kilitlemez)
+6. 🏁 Genel Değerlendirme Sınavı (8 soru)
+
+## Roller ve yetkiler
+
+**Yönetici**
+- Kullanıcı hesabı açar, kapatır, şifre sıfırlar.
+- Ders tanımlar, iptal eder, yeniden açar.
+- Derslere öğretmen ve öğrenci atar.
+- Not defterini görür.
+
+**Öğretmen** (yalnızca atandığı derslerde)
+- Video, quiz, ödev ve sınav ekler, düzenler, siler, sıralar.
+- Quiz ve sınavlarda doğru cevabı işaretler; bunlar otomatik notlandırılır.
+- Ödev türleri: **test**, **açık uçlu**, **dosya yükleme** ve **kod** (otomatik testli, Python/JS).
+- Bir ödevi "geçer not almadan ilerlenemez" olarak işaretleyebilir.
+- Ödev ve sınavları onaylar; gerekirse notu değiştirir ve geri bildirim yazar.
+- Not defterini görür ve CSV olarak dışa aktarır.
+
+**Öğrenci**
+- Videoları sırayla izler.
+- Quizler anında notlandırılır; baraj geçilince sonraki adım açılır.
+- Ödev ve sınav notlarını öğretmen onayladıktan sonra görür.
+- Ders sonunda bir başarı seviyesi alır: Çok iyi, İyi, Orta ya da Geliştirilmeli.
+
+## Videolar hakkında önemli not
+
+YouTube'daki **Özel (Private)** videolar başka sitelere gömülemez. Yalnızca davet edilmiş ve oturum açmış hesaplarda oynar; sitede "Video kullanılamıyor" hatası verir.
+
+Bu yüzden videoları **Liste dışı (Unlisted)** olarak yükleyin. Liste dışı videolar aramada ve kanal sayfasında çıkmaz.
+
+Uygulama videoları `youtube-nocookie.com` üzerinden, ilgili video önerileri kapalı şekilde gömüyor ve bağlantıyı arayüzde hiçbir yerde göstermiyor.
+
+Bağlantıyı tamamen gizlemek teknik olarak mümkün değil: oynatıcıdaki YouTube logosu ve tarayıcının geliştirici araçları video kimliğini gösterebilir. Bunun önüne geçmek gerekirse videolar Vimeo (alan adı kısıtlamalı) ya da Cloudflare Stream gibi bir servise taşınabilir.
 
 ## Çalıştırma
 
-Statik bir site olduğu için derleme adımı yok:
-
 ```bash
-python3 -m http.server 8000
-# http://localhost:8000 adresini aç
+python3 -m http.server 8000   # http://localhost:8000
 ```
 
-`index.html` dosyası doğrudan da açılabilir (`file://`). GitHub Pages, Netlify ve benzeri statik barındırma servisleriyle olduğu gibi yayınlanabilir.
-
-Kod editörü (CodeMirror) ve Python (Pyodide) CDN'den yükleniyor. CDN'e erişilemezse editör düz bir metin alanına geri dönüyor ve JavaScript yine çalışıyor.
+Derleme adımı yok. GitHub Pages'te olduğu gibi çalışıyor.
 
 ## Dosya yapısı
 
 | Dosya | Açıklama |
 |---|---|
-| `index.html` | Sayfa iskeleti |
-| `css/style.css` | Stiller ve tema token'ları |
-| `js/problems.js` | Problem bankası |
-| `js/runner.js` | Web Worker tabanlı kod çalıştırıcı ve test karşılaştırma |
-| `js/app.js` | Arayüz, yönlendirme (`#/p/<id>`), XP, rozetler, kayıt |
-| `tests/verify-problems.mjs` | Beklenen çıktıları referans çözümlerle doğrulayan betik |
+| `index.html`, `css/lms.css` | Eğitim platformu |
+| `js/api.js` | Veri katmanı: kimlik doğrulama, yetki kontrolü, ilerleme kilitleri, notlandırma |
+| `js/seed.js` | Demo hesapları ve örnek ders |
+| `js/app.js` | Yönlendirme, üst menü, giriş ekranı |
+| `js/views-student.js`, `js/views-teacher.js`, `js/views-admin.js` | Rol bazlı ekranlar |
+| `js/ui.js` | Ortak yardımcılar (modal, bildirim, konfeti, kod editörü, YouTube) |
+| `js/runner.js` | Kodu Web Worker içinde, zaman aşımıyla çalıştıran test çalıştırıcı (Python için Pyodide) |
+| `arena.html`, `js/arena.js`, `js/problems.js`, `css/style.css` | Kod Arenası |
+| `tests/api.test.mjs` | İş kuralı testleri: `node tests/api.test.mjs` |
+| `tests/verify-problems.mjs` | Arena problemlerinin doğrulaması |
 
-## Yeni problem eklemek
+## Gerçek kullanıma geçiş
 
-1. `js/problems.js` içindeki diziye bir nesne ekle:
+Arayüz verilere yalnızca `js/api.js` içindeki asenkron fonksiyonlar üzerinden erişiyor. Yetki kontrolleri de, cevap anahtarlarının öğrenciden gizlenmesi de, notların onaya kadar saklanması da bu katmanda yapılıyor.
 
-   ```js
-   {
-     id: "kare", title: "Karesi", diff: "kolay", topic: "Temeller",
-     fn: "kare", params: ["n"],
-     desc: `<p><code>n</code> sayısının karesini döndür.</p>`,
-     hints: ["n * n"],
-     tests: [
-       { in: [3], out: 9 },          // örnek (görünür) test
-       { in: [-4], out: 16, h: true } // gizli test
-     ],
-   }
-   ```
+Çok kullanıcılı gerçek kullanım için bu fonksiyonların aynı imzalarla bir sunucuya taşınması gerekiyor. Örneğin:
 
-2. `tests/verify-problems.mjs` dosyasına bir referans çözüm ekle.
-3. Doğrulamayı çalıştır: `node tests/verify-problems.mjs`.
+- **Supabase:** Postgres, kimlik doğrulama, Row Level Security ve dosya deposu.
+- **Firebase:** Firestore ve kimlik doğrulama.
+- Kendi Node.js sunucunuz.
 
-Sonuçlar JSON'a uygun değerler olarak karşılaştırılıyor. Sayılarda `1e-6` tolerans var. Python'daki tuple, liste olarak kabul ediliyor.
-
-> Not: Bu, sunucusuz bir alıştırma aracı. Gizli testler istemci tarafındaki kaynak kodda bulunduğu için resmî sınav ya da notlandırma amacıyla kullanılmamalı. Sunucu tarafında güvenilir değerlendirme gerekiyorsa Teaching.Codes gibi bir arka uca bağlanabilir.
+Mevcut demoda istemci tarafındaki kontroller tarayıcının geliştirici araçlarıyla atlatılabilir. Bu nedenle demo, notu önemli sınavlar için kullanılmamalı.
