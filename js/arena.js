@@ -9,7 +9,16 @@
   const LANGS = { js: "JavaScript", py: "Python" };
 
   // ---------- Kalıcı durum (localStorage; erişilemezse yalnızca bellekte tutulur) ----------
-  const KEY = "kodla-kesfet.v1";
+  // İlerleme, platforma giriş yapmış kullanıcıya göre ayrı tutulur; aynı tarayıcıyı
+  // kullanan öğrenciler birbirinin XP'sini ve kodunu görmez. Giriş yoksa misafir verisi kullanılır.
+  const who = (() => {
+    try {
+      const id = localStorage.getItem("kk-lms.session");
+      const u = id && (JSON.parse(localStorage.getItem("kk-lms.v1")) || { users: [] }).users.find(x => x.id === id && x.active);
+      return u ? { id: u.id, name: u.name } : null;
+    } catch { return null; }
+  })();
+  const KEY = who ? `kodla-kesfet.v1.${who.id}` : "kodla-kesfet.v1";
   const blank = () => ({ xp: 0, solved: {}, hints: {}, attempts: {}, code: {}, lang: "js", streak: { count: 0, last: null }, theme: null });
   let S = blank();
   try { S = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY)) || {}); } catch {}
@@ -70,6 +79,7 @@
   function renderTop() {
     const L = level(S.xp);
     $("#topStats").innerHTML = `
+      <span class="chip who" title="${who ? "İlerlemen bu hesaba kaydediliyor" : "Giriş yapmadın; ilerleme bu tarayıcıda misafir olarak saklanır"}">${who ? `👤 ${esc(who.name.split(" ")[0])}` : "👤 Misafir"}</span>
       <span class="chip" title="Günlük seri">🔥 ${liveStreak()}</span>
       <span class="chip" title="Toplam XP">⭐ ${S.xp} XP</span>
       <span class="chip lvl" title="${L.into}/${L.need} XP sonraki seviyeye">Sv. ${L.lv}<i style="--p:${(L.into / L.need) * 100}%"></i></span>`;
