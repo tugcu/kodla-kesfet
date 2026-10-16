@@ -47,6 +47,7 @@
       async put(id, blob) { try { await tx("readwrite", s => s.put(blob, id)); } catch { memFiles.set(id, blob); } },
       async get(id) { try { return (await tx("readonly", s => s.get(id))) || memFiles.get(id); } catch { return memFiles.get(id); } },
       async clear() { memFiles.clear(); try { await tx("readwrite", s => s.clear()); } catch {} },
+      async del(id) { memFiles.delete(id); try { await tx("readwrite", s => s.delete(id)); } catch {} },
     };
   })();
 
@@ -175,6 +176,23 @@
       u.passwordHash = await hash(u.username, newPw); persist();
     },
 
+    // Oturumdaki öğrencinin yalnızca kendi ilerlemesini siler: izlenen videolar, quiz/ödev/sınav
+    // teslimleri, yüklediği dosyalar, kod taslakları ve Kod Arenası verisi. Hesap bilgileri
+    // ve diğer öğrencilerin verisi değişmez. Kilit durumları teslimlerden hesaplandığı için
+    // kendiliğinden ilk duruma döner.
+    async resetMyProgress() {
+      const u = need("student");
+      const mine = db.submissions.filter(s => s.studentId === u.id);
+      const fileIds = new Set(mine.filter(s => s.file).map(s => s.file.id));
+      db.files.filter(f => f.ownerId === u.id).forEach(f => fileIds.add(f.id));
+      db.submissions = db.submissions.filter(s => s.studentId !== u.id);
+      db.files = db.files.filter(f => !fileIds.has(f.id));
+      Object.keys(db.progress).filter(k => k.startsWith(u.id + ":")).forEach(k => delete db.progress[k]);
+      persist();
+      for (const id of fileIds) await Files.del(id);
+      if (root.KK_STORAGE) try { root.KK_STORAGE.clearProgressKeys(u.id); } catch {}
+    },
+
     // ----- Yönetici -----
     async listUsers() {
       need("admin");
@@ -235,6 +253,7 @@
     async resetDemo() {
       need("admin");
       db = emptyDb(); await Files.clear(); await root.KK_SEED(db, { uid, hash, now }); persist();
+      if (root.KK_STORAGE) try { root.KK_STORAGE.clearProgressKeys(null); } catch {}
       ls.del(SESSION);
     },
 
